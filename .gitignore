@@ -1,0 +1,22 @@
+# Wally packages
+/Packages
+/ServerPackages
+/DevPackages
+
+# Generated
+sourcemap.json
+globalTypes.d.luau
+roblox.yml
+*.rbxl
+*.rbxlx
+*.rbxm
+*.rbxmx
+*.rbxl.lock
+*.rbxlx.lock
+
+# Local Claude settings
+.claude/settings.local.json
+
+# OS / editor
+.DS_Store
+Thumbs.db
