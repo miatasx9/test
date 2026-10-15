@@ -1,27 +1,30 @@
 # Roblox game — Claude instructions
 
-Rojo project. **Code lives in `src/` on disk, not in Studio.** Edit files here; Rojo syncs them into Studio live (`rojo serve`). Never paste or edit scripts through the Studio MCP when a file in `src/` can be edited instead.
+The game lives **in Roblox Studio**, not in this repo. Read and change it through the Roblox Studio MCP. This repo holds only Claude's notes and workflows for the game.
 
-## Layout (see `default.project.json`)
-- `src/server/` → `ServerScriptService.Server`. `init.server.luau` boots every module in `Services/` (Init, then Start).
-- `src/client/` → `StarterPlayerScripts.Client`. `init.client.luau` boots every module in `Controllers/`.
-- `src/shared/` → `ReplicatedStorage.Shared`. Shared modules; `Remotes.luau` owns every RemoteEvent.
-- `Packages/` (Wally, git-ignored) — never read or edit; don't search it.
+## Start of every session
+1. Read `docs/GAME_MAP.md` first. It says where every system and script lives. Use it instead of exploring the place tree.
+2. If it's still the empty template, or clearly out of date, run the `map-game` skill before doing anything else.
 
-## Conventions
-- Every file starts with `--!strict`. Fix type errors; don't cast to `any` to silence them (the loaders' `require` cast is the one exception).
-- Services/Controllers are plain module tables with optional `Init()` (no yielding, no cross-service calls) and `Start()`.
-- Server is authoritative. Every `OnServerEvent` handler validates argument types/ranges and rate-limits. Never trust the client.
-- New remotes: add the name to `Remotes.Names`, get it with `Remotes.event(...)`. Don't create RemoteEvents anywhere else.
-- Use `task.wait/spawn/delay`, never `wait/spawn/delay`. Use `GetService`, never `game.Workspace`-style access for services.
-- PascalCase for modules/services, camelCase for locals/functions, UPPER_SNAKE for constants.
-- Keep comments sparse; match surrounding style. Tabs, double quotes (StyLua enforces).
+## Keep MCP output small (this is where tokens go)
+- Go straight to the script you need using the path in `GAME_MAP.md`. Don't list whole services or dump `GetDescendants()`.
+- When running code, print only the specific values you need. Truncate long sources and lists.
+- Read a script's source once per task. Don't re-read it after every small edit unless something else may have changed it.
+- Only change the parts of a script that need changing; keep the rest exactly as it was.
 
-## Verify every change
-Run `scripts/check.sh` (or `scripts/check.sh --fix` to format first). It runs StyLua, Selene and luau-lsp type checking. All must pass before you call work done.
+## Making changes
+Follow the `studio-change` skill: locate, read, edit, playtest, check output, then update `GAME_MAP.md` if anything moved or was added.
+- Don't delete or rename scripts, or move instances, without asking first.
+- Ask before large refactors that touch many scripts.
 
-## Studio MCP
-Use the Studio MCP only for things that exist only in Studio: running code in a playtest, reading output, inspecting/placing instances in Workspace, inserting models. Keep `run_code` output small — print specific values, never whole `GetDescendants()` dumps.
+## Code conventions
+- New scripts start with `--!strict` where practical. Match the style of the scripts around them.
+- Server is authoritative. Every `OnServerEvent` handler checks argument types and ranges and rate-limits per player. Never trust values the client sends.
+- Use `task.wait/spawn/delay`, never `wait/spawn/delay`. Get services with `game:GetService`.
+- New remotes go where the game already keeps its remotes (see `GAME_MAP.md`). Use the `add-remote` skill.
 
 ## Assets
-Art/audio/models come from ForgeGUI (or the Creator Store) as asset IDs. Store IDs as constants in a shared module (e.g. `src/shared/Assets.luau`), not scattered literals.
+Art, audio and models come from ForgeGUI or the Creator Store as asset IDs. Record IDs in `GAME_MAP.md` under Assets, and keep them as constants in one module rather than scattered literals.
+
+## Safety
+The user keeps backups (File → Save to File). Before a risky multi-script change, remind them to save a backup copy first.
