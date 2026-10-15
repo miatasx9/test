@@ -12,8 +12,9 @@ _Not mapped yet. Run the `map-game` skill._
 <!-- One block per system: purpose, scripts involved (full paths), remotes used. -->
 
 ## Scripts
-| Path | Type | Purpose |
-|---|---|---|
+| Path | Type | Where | Purpose |
+|---|---|---|---|
+<!-- Where: Rojo (file in src/) or Studio-only -->
 
 ## Remotes
 | Path | Direction | Purpose | Validated? |

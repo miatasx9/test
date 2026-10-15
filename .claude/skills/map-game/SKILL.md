@@ -1,12 +1,9 @@
 ---
 name: map-game
-description: Build or refresh docs/GAME_MAP.md, a compact index of every script, remote, DataStore and asset in the Studio place, so later sessions don't need to re-explore. Use when GAME_MAP.md is empty or out of date.
+description: Build or refresh docs/GAME_MAP.md, a compact index of every script, remote, DataStore and asset in the game, so later sessions don't need to re-explore. Use when GAME_MAP.md is empty or out of date.
 ---
 
-1. Using the Studio MCP, run one script that collects, for Workspace, ServerScriptService, ServerStorage, ReplicatedStorage, ReplicatedFirst, StarterPlayer, StarterGui and StarterPack:
-   - every Script, LocalScript and ModuleScript: full path, class, line count,
-   - every RemoteEvent, RemoteFunction, UnreliableRemoteEvent and BindableEvent: full path.
-   Skip anything inside a folder named `Packages`, `_Index` or similar vendored libraries, and anything under CoreGui. Print one compact line per item.
-2. For each script, read only the first ~15 lines plus any lines containing `DataStoreService`, `GetDataStore`, `OnServerEvent`, `OnClientEvent` or `rbxassetid`. Don't read whole sources.
-3. Write `docs/GAME_MAP.md`: overview, systems grouped by purpose, a one-line purpose per script, the remotes table (mark whether server handlers validate input, if you could tell), DataStores, and asset IDs.
-4. Tell the user what you mapped and anything risky you noticed, such as remotes with no validation. Don't fix things without asking.
+1. **Rojo scripts** (files in `src/`): get paths from the file tree. For each, read only the first ~15 lines plus lines matching `DataStoreService|GetDataStore|OnServerEvent|OnClientEvent|OnServerInvoke|rbxassetid` (use grep, not full reads).
+2. **Studio-only scripts and remotes**: through the Studio MCP, run one script that prints one compact line per Script/LocalScript/ModuleScript **not** covered by `src/` (full path, class, line count), and per RemoteEvent, RemoteFunction, UnreliableRemoteEvent and BindableEvent (full path). Skip vendored folders (`Packages`, `_Index`) and CoreGui. For Studio-only scripts, read only the top lines and the same keyword lines.
+3. Write `docs/GAME_MAP.md`: overview, systems grouped by purpose, the scripts table (with a Rojo / Studio-only column), the remotes table (mark whether server handlers validate input, if you could tell), DataStores, assets.
+4. Tell the user what you mapped and anything risky you noticed, such as unvalidated remotes. Don't fix anything without asking.

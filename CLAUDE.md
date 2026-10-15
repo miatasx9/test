@@ -1,30 +1,35 @@
 # Roblox game — Claude instructions
 
-The game lives **in Roblox Studio**, not in this repo. Read and change it through the Roblox Studio MCP. This repo holds only Claude's notes and workflows for the game.
+Hybrid setup: **scripts live as files in `src/` and Rojo syncs them into Studio**. Everything else (map, parts, UI, models) and a few "Studio-only" scripts stay in Studio and are reached through the Roblox Studio MCP. `docs/GAME_MAP.md` says which is which.
 
 ## Start of every session
-1. Read `docs/GAME_MAP.md` first. It says where every system and script lives. Use it instead of exploring the place tree.
-2. If it's still the empty template, or clearly out of date, run the `map-game` skill before doing anything else.
+1. Read `docs/GAME_MAP.md` first. Use it instead of exploring the place.
+2. If `src/` is empty, the game hasn't been migrated yet. Offer to run `migrate-to-rojo`, but only run it when the user agrees. Until then, work through the MCP.
+3. If the map is still the empty template or clearly out of date, run `map-game`.
 
-## Keep MCP output small (this is where tokens go)
-- Go straight to the script you need using the path in `GAME_MAP.md`. Don't list whole services or dump `GetDescendants()`.
-- When running code, print only the specific values you need. Truncate long sources and lists.
-- Read a script's source once per task. Don't re-read it after every small edit unless something else may have changed it.
-- Only change the parts of a script that need changing; keep the rest exactly as it was.
+## Golden rule
+- **Script in `src/` → edit the file. Never edit it through the MCP**: Rojo overwrites Studio from the files.
+- Studio-only scripts and non-script objects → edit through the MCP.
+- New scripts go in `src/` unless they must sit inside a part, model, tool or GUI.
+- Rojo must be connected (`rojo serve` + Connect in the Studio plugin) for file edits to reach Studio. If a playtest doesn't reflect your change, check that first.
 
-## Making changes
-Follow the `studio-change` skill: locate, read, edit, playtest, check output, then update `GAME_MAP.md` if anything moved or was added.
-- Don't delete or rename scripts, or move instances, without asking first.
-- Ask before large refactors that touch many scripts.
+## Keep tokens down
+- Search `src/` with grep/glob; it's far cheaper than the MCP.
+- Through the MCP, go straight to the path you need; print only the values you need; never dump whole trees or `GetDescendants()`.
+- Read a script once per task, and change only the lines that need changing.
+
+## Verify every change
+Run `scripts/check.sh` (StyLua, Selene, luau-lsp type check). Code you touched must pass. Older warnings recorded in GAME_MAP's "Known issues" are a baseline; don't fix them unless asked. Then playtest as in the `studio-change` skill.
 
 ## Code conventions
-- New scripts start with `--!strict` where practical. Match the style of the scripts around them.
-- Server is authoritative. Every `OnServerEvent` handler checks argument types and ranges and rate-limits per player. Never trust values the client sends.
+- Match the style of the surrounding code. New files start with `--!strict` where practical.
+- Server is authoritative. Every `OnServerEvent` handler checks argument types and ranges and rate-limits per player (`add-remote` skill).
 - Use `task.wait/spawn/delay`, never `wait/spawn/delay`. Get services with `game:GetService`.
-- New remotes go where the game already keeps its remotes (see `GAME_MAP.md`). Use the `add-remote` skill.
-
-## Assets
-Art, audio and models come from ForgeGUI or the Creator Store as asset IDs. Record IDs in `GAME_MAP.md` under Assets, and keep them as constants in one module rather than scattered literals.
+- Script file suffixes: `.server.luau` Script, `.client.luau` LocalScript, `.luau` ModuleScript; a folder with `init.*.luau` is a script with children. Every subfolder of `src/` has an `init.meta.json` with `ignoreUnknownInstances: true` so Rojo never deletes non-script siblings; keep that when adding folders.
 
 ## Safety
-The user keeps backups (File → Save to File). Before a risky multi-script change, remind them to save a backup copy first.
+- Ask before deleting, renaming or moving scripts or instances, and before large multi-script refactors.
+- Git is the undo button: offer to commit after each working change.
+
+## Assets
+Art, audio and models come from ForgeGUI or the Creator Store as asset IDs. Record them in `docs/GAME_MAP.md` under Assets and keep them as constants in one module.

@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(scripts/check.sh:*)",
+      "Bash(rojo sourcemap:*)",
+      "Bash(rojo build:*)",
+      "Bash(selene:*)",
+      "Bash(stylua:*)",
+      "Bash(luau-lsp analyze:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)"
+    ],
+    "deny": [
+      "Read(./Packages/**)",
+      "Read(./ServerPackages/**)",
+      "Read(./sourcemap.json)",
+      "Read(./globalTypes.d.luau)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "stylua src 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}

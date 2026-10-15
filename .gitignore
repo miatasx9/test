@@ -5,3 +5,9 @@
 .claude/settings.local.json
 .DS_Store
 Thumbs.db
+/Packages
+/ServerPackages
+/DevPackages
+sourcemap.json
+globalTypes.d.luau
+roblox.yml
